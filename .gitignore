@@ -1,0 +1,10 @@
+/build/*
+!/build/main.exe
+*.spv
+.vs/
+/.cache/
+/compile_commands.json
+/cpu_cycles_per_sec
+*~
+/vendor/*
+/include

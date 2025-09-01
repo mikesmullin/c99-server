@@ -1,0 +1,41 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug main",
+      "type": "lldb-dap",
+      "request": "attach",
+      "program": "build/main",
+      "sourceMap": {
+        "/app": "z:\\tmp",
+      },
+      "initCommands": [
+        "platform select remote-linux",
+      ],
+      "attachCommands": [
+        "gdb-remote localhost:2345",
+      ],
+      // "disableASLR": false,
+      // "timeout": 300000
+      "internalConsoleOptions": "openOnSessionStart",
+      "preLaunchTask": "run"
+    },
+    {
+      "name": "Debug test",
+      "type": "lldb-dap",
+      "request": "attach",
+      "program": "build/${fileBasenameNoExtension}",
+      "sourceMap": {
+        "/app": "z:\\tmp",
+      },
+      "initCommands": [
+        "platform select remote-linux",
+      ],
+      "attachCommands": [
+        "gdb-remote localhost:2345",
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "preLaunchTask": "run test"
+    }
+  ]
+}

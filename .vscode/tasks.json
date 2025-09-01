@@ -1,0 +1,141 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "podman",
+      "args": [
+        "build",
+        "-t",
+        "game-server:latest",
+        "."
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "build test",
+      "type": "shell",
+      "command": "podman",
+      "args": [
+        "build",
+        "-f",
+        "Dockerfile",
+        "--build-arg",
+        "IN_FILE=${relativeFile}",
+        "--build-arg",
+        "OUT_BINARY=${fileBasenameNoExtension}",
+        "-t",
+        "game-server:latest",
+        "."
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "stop",
+      "type": "shell",
+      "command": "podman",
+      "args": [
+        "stop",
+        "game-server"
+      ]
+    },
+    {
+      "label": "run",
+      "type": "shell",
+      "command": "podman",
+      "args": [
+        "run",
+        "--rm",
+        "-d",
+        "--name",
+        "game-server",
+        "-p",
+        "2345:2345",
+        // "-v",
+        // "%cd%:/app",
+        "--privileged",
+        "game-server:latest"
+      ],
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "build",
+        "copy symbols"
+      ],
+      // "isBackground": true
+    },
+    {
+      "label": "run test",
+      "type": "shell",
+      "command": "podman",
+      "args": [
+        "run",
+        "--rm",
+        "-d",
+        "--name",
+        "game-server",
+        "-p",
+        "2345:2345",
+        // "-v",
+        // "%cd%:/app",
+        "--privileged",
+        "game-server:latest"
+      ],
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "build test",
+        "copy symbols"
+      ],
+      // "isBackground": true
+    },
+    {
+      "label": "copy headers",
+      "type": "shell",
+      "command": "podman",
+      "args": [
+        "run",
+        "--rm",
+        "-v",
+        "%CD%/include:/host_include",
+        "game-server:latest",
+        "sh",
+        "-c",
+        "tar -czf /host_include/alpine.tar.gz -C /usr/include ."
+      ]
+    },
+    {
+      "label": "copy symbols",
+      "type": "shell",
+      "command": "podman",
+      "args": [
+        "run",
+        "--rm",
+        "-v",
+        "%CD%/build:/host_build",
+        "game-server:latest",
+        "sh",
+        "-c",
+        "cp -r build/* /host_build/"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
